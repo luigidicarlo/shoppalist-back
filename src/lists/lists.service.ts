@@ -19,13 +19,12 @@ export class ListsService {
   ) {}
 
   async index(user: UserDocument, page: number, perPage: number) {
-    const { currentPage, lastPage, documents } = await paginate<ListDocument>(
+    const { currentPage, lastPage, documents } = await paginate<ListDocument>({
       page,
-      perPage,
-      this.ListModel,
-      {},
-      { userId: user.id },
-    );
+      limit: perPage,
+      Model: this.ListModel,
+      query: { userId: user.id },
+    });
 
     return {
       currentPage,
@@ -50,7 +49,6 @@ export class ListsService {
     const newList = new this.ListModel({
       name: listData.name.trim(),
       userId: user.id,
-      expenses: listData.expenses || [],
     });
 
     const createdList = await newList.save();
@@ -64,9 +62,6 @@ export class ListsService {
     existingList.name = listData.name
       ? listData.name.trim()
       : existingList.name;
-    existingList.expenses = listData.expenses
-      ? [...listData.expenses]
-      : existingList.expenses;
 
     const updatedList = await existingList.save();
 
@@ -87,7 +82,7 @@ export class ListsService {
     return { ...existingList.toJSON() };
   }
 
-  private async checkForExistingList(userId: string, listId: string) {
+  async checkForExistingList(userId: string, listId: string) {
     const existingList = await this.ListModel.findOne({
       userId,
       _id: listId,

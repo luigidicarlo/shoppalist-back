@@ -6,8 +6,9 @@ import { ListConfig } from './lists.schema';
 import { ListsService } from './lists.service';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ ...ListConfig }]), UsersModule],
   controllers: [ListsController],
+  exports: [ListsService],
+  imports: [MongooseModule.forFeature([{ ...ListConfig }]), UsersModule],
   providers: [ListsService],
 })
 export class ListsModule {}

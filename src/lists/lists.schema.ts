@@ -1,7 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema } from 'mongoose';
-import { UserConfig } from 'src/users/users.schema';
-import { Expense, ExpenseSchema } from './expenses.schema';
+import { UserConfig } from '../users/users.schema';
 
 export type ListDocument = List & Document;
 
@@ -16,9 +15,6 @@ export class List {
     required: true,
   })
   userId: string;
-
-  @Prop({ type: [ExpenseSchema], default: [] })
-  expenses: Expense[];
 }
 
 const ListSchema = SchemaFactory.createForClass(List);

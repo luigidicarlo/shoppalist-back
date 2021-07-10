@@ -5,8 +5,8 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { verify } from 'jsonwebtoken';
-import { UsersService } from 'src/users/users.service';
+import { JwtPayload, verify } from 'jsonwebtoken';
+import { UsersService } from '../../users/users.service';
 import { IAuthReq } from '../interface/auth-req.interface';
 
 @Injectable()
@@ -27,7 +27,13 @@ export class JwtGuard implements CanActivate {
 
     if (!bearerToken) throw new UnauthorizedException('jwt.invalid-token');
 
-    const payload = verify(bearerToken, secret);
+    let payload: string | JwtPayload;
+
+    try {
+      payload = verify(bearerToken, secret);
+    } catch {
+      throw new UnauthorizedException('jwt.invalid-token');
+    }
 
     if (!payload) throw new UnauthorizedException('jwt.invalid-token');
 
