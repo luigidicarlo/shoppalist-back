@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { genSaltSync, hashSync } from 'bcryptjs';
 import { Model } from 'mongoose';
@@ -75,25 +71,5 @@ export class UsersService {
     const deleted = await this.UserModel.deleteOne({ _id: userId });
 
     return { deleted: deleted.n > 0, ...existingUser.toJSON() };
-  }
-
-  async setRefreshToken(userId: string, refreshToken: string) {
-    const user = await this.getById(userId);
-
-    if (!user) throw new UnauthorizedException('refresh.user-not-found');
-
-    user.refreshToken = refreshToken;
-
-    const updatedUser = await user.save();
-
-    return Boolean(updatedUser);
-  }
-
-  async getRefreshToken(userId: string) {
-    const user = await this.getById(userId);
-
-    if (!user) throw new UnauthorizedException('refresh.user-not-found');
-
-    return user.refreshToken;
   }
 }
